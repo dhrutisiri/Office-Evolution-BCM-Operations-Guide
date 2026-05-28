@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BCM Operations Guide — Office Evolution Tysons</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0ede8; color: #1a1a1a; font-size: 14px; }
+
+#app { display: flex; min-height: 100vh; }
+
+/* ── SIDEBAR ── */
+#sidebar {
+  width: 230px;
+  flex-shrink: 0;
+  background: #1c1c1e;
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 0 1.25rem 1.25rem;
+  border-bottom: 1px solid #2e2e30;
+  margin-bottom: 0.75rem;
+}
+.sidebar-logo-title { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: -0.01em; }
+.sidebar-logo-sub { font-size: 11px; color: #666; margin-top: 3px; }
+.nav-section {
+  padding: 0.75rem 1.25rem 0.2rem;
+  font-size: 10px; font-weight: 700; color: #444;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer; font-size: 13px; color: #888;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: #252527; color: #ccc; }
+.nav-item.active { color: #fff; background: #252527; border-left-color: #e8a838; font-weight: 500; }
+.nav-item svg { width: 14px; height: 14px; flex-shrink: 0; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+
+/* ── MAIN ── */
+#main { flex: 1; padding: 2.5rem 3rem; max-width: 820px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header { margin-bottom: 2rem; }
+.page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+.page-header .subtitle { font-size: 13px; color: #666; line-height: 1.5; }
+
+/* ── CARDS ── */
+.card {
+  background: #fff; border-radius: 12px;
+  border: 1px solid #e8e4de;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.card-title { font-size: 13px; font-weight: 700; margin-bottom: 0.5rem; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
+.card-body { font-size: 13px; color: #444; line-height: 1.7; }
+.card-body b { color: #1a1a1a; }
+
+.card.yellow { border-left: 3px solid #e8a838; }
+.card.green  { border-left: 3px solid #34a853; }
+.card.blue   { border-left: 3px solid #4285f4; }
+.card.red    { border-left: 3px solid #ea4335; }
+.card.gray   { border-left: 3px solid #aaa; background: #faf9f7; }
+
+/* ── STEP FLOW ── */
+.step-flow { display: flex; flex-direction: column; }
+.step { display: flex; }
+.step-left { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0; z-index: 1;
+  background: #1c1c1e; color: #fff;
+}
+.step-num.amber  { background: #e8a838; color: #fff; }
+.step-num.green  { background: #34a853; color: #fff; }
+.step-num.blue   { background: #4285f4; color: #fff; }
+.step-num.done   { background: #34a853; color: #fff; }
+.step-num.sub    { background: #f0ede8; color: #888; border: 1px solid #ddd; font-size: 10px; }
+.step-line { width: 1px; flex: 1; background: #e0dbd4; min-height: 12px; }
+.step-body { padding: 0 0 1.5rem 14px; flex: 1; }
+.step-title { font-size: 14px; font-weight: 600; padding-top: 4px; margin-bottom: 4px; }
+.step-desc { font-size: 13px; color: #555; line-height: 1.7; }
+.step-desc b { color: #1a1a1a; }
+
+/* ── TAGS ── */
+.tag {
+  display: inline-block; font-size: 10px; padding: 2px 8px;
+  border-radius: 20px; font-weight: 700; margin-right: 4px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.tag-sheet  { background: #e8f0fe; color: #1a56db; }
+.tag-scan   { background: #fce8e6; color: #c0392b; }
+.tag-email  { background: #e6f4ea; color: #1e7e34; }
+.tag-file   { background: #f3e8fd; color: #6d28d9; }
+.tag-write  { background: #e6f4ea; color: #1e7e34; }
+
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #aaa; margin: 1.75rem 0 0.75rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: #e8e4de; }
+
+/* ── CHECKLIST ── */
+.checklist { list-style: none; }
+.checklist li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 0.55rem 0; border-bottom: 1px solid #f0ede8;
+  font-size: 13px; color: #333; line-height: 1.5;
+}
+.checklist li:last-child { border-bottom: none; }
+.check-num {
+  width: 22px; height: 22px; border-radius: 6px;
+  background: #f0ede8; border: 1px solid #ddd;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #888; flex-shrink: 0; margin-top: 1px;
+}
+.check-num.amber { background: #fff3cd; border-color: #e8a838; color: #b07d00; }
+.check-num.green { background: #d4edda; border-color: #34a853; color: #155724; }
+
+/* ── Q CARDS ── */
+.q-card {
+  background: #fff; border-radius: 12px; border: 1px solid #e8e4de;
+  padding: 1rem 1.25rem; margin-bottom: 10px;
+}
+.q-category {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #e8a838; margin-bottom: 8px;
+}
+.q-list { list-style: none; }
+.q-list li {
+  font-size: 13px; color: #333; line-height: 1.6;
+  padding: 4px 0; border-bottom: 1px solid #f5f3f0;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.q-list li:last-child { border-bottom: none; }
+.q-list li::before { content: "→"; color: #e8a838; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+/* ── BUTTON ── */
+.btn-sm {
+  font-size: 12px; padding: 6px 14px; border-radius: 20px;
+  border: 1px solid #ddd; background: #fff; cursor: pointer;
+  color: #333; transition: all 0.15s; font-weight: 500;
+}
+.btn-sm:hover { background: #1c1c1e; color: #fff; border-color: #1c1c1e; }
+.action-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+
+/* ── PHONE SCRIPT ── */
+.script-box {
+  background: #1c1c1e; color: #e0e0e0; border-radius: 10px;
+  padding: 1rem 1.25rem; font-size: 13px; line-height: 1.8; margin-top: 6px;
+}
+.script-box b { color: #e8a838; }
+.script-box i { color: #888; font-style: normal; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-title">OE Tysons</div>
+      <div class="sidebar-logo-sub">BCM Operations Guide · v4</div>
+    </div>
+
+    <div class="nav-section">Mail</div>
+    <div class="nav-item active" data-page="mail-sort" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,4 12,13 2,4"/></svg>
+      Sorting mail
+    </div>
+    <div class="nav-item" data-page="mail-pickup" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Member pickups
+    </div>
+    <div class="nav-item" data-page="mail-friday" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Friday forwarding
+    </div>
+
+    <div class="nav-section">Rooms</div>
+    <div class="nav-item" data-page="rooms" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Room booking
+    </div>
+
+    <div class="nav-section">Members</div>
+    <div class="nav-item" data-page="marketing" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      Leads & outreach
+    </div>
+    <div class="nav-item" data-page="contracts" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      New contracts
+    </div>
+    <div class="nav-item" data-page="questions" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Tour questions
+    </div>
+
+    <div class="nav-section">Daily</div>
+    <div class="nav-item" data-page="schedule" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Daily schedule
+    </div>
+    <div class="nav-item" data-page="supplies" onclick="nav(this)">
+      <svg viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Supplies
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+
+    <!-- ══ MAIL SORT ══ -->
+    <div id="page-mail-sort" class="page active">
+      <div class="page-header">
+        <h1>Sorting incoming mail</h1>
+        <p class="subtitle">Work through each check in order. The first category that matches is where the mail goes.</p>
+      </div>
+
+      <div class="card red" style="margin-bottom: 1.5rem;">
+        <div class="card-title">🗑 Toss junk mail before sorting</div>
+        <div class="card-body">
+          If it's obvious junk, throw it away — don't waste time sorting it. Toss anything that looks like:<br><br>
+          <b>· </b>"Current Resident" or "Current Business Owner" with no specific name<br>
+          <b>· </b>Generic bulk mailers, mass ads, or promotional catalogs<br>
+          <b>· </b>Unsolicited credit card or insurance offers<br>
+          <b>· </b>Political mailers with no specific addressee<br><br>
+          <i style="color:#888; font-size:12px;">If you're unsure whether something is junk, go ahead and sort it — when in doubt, don't toss it.</i>
+        </div>
+      </div>
+
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-left"><div class="step-num amber">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">4-digit number starting with 1 on the envelope?</div>
+            <div class="step-desc">e.g. <b>1023</b>, <b>1048</b> — that's iPostal. Jump straight to step 5.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left"><div class="step-num amber">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Check Forwarding/Scanning Members tab</div>
+            <div class="step-desc"><span class="tag tag-sheet">Google Sheet</span> Above the "Forwarding Members" header = Scanning · Below = Forwarding</div>
+            <div class="two-col">
+              <div class="card green" style="margin-top:10px; margin-bottom:0;">
+                <div class="card-title">Scanning member</div>
+                <div class="card-body">
+                  <span class="tag tag-scan">1 Scan</span> on the office printer<br>
+                  <span class="tag tag-email">2 Email</span> the scan to their address in the sheet<br>
+                  <span class="tag tag-file">3 File</span> the physical piece in their correct slot<br><br>
+                  <i style="color:#888; font-size:12px;">They may also have a virtual or physical mailbox — still file it there after scanning.</i>
+                </div>
+              </div>
+              <div class="card blue" style="margin-top:10px; margin-bottom:0;">
+                <div class="card-title">Forwarding member</div>
+                <div class="card-body">
+                  Place in the <b>bottom drawer, far right of the desk</b> (bottom cabinet).<br><br>
+                  Forward on Fridays — see Friday Forwarding.
+                </div>
+              </div>
+            </div>
+            <div class="card gray" style="margin-top:10px; margin-bottom:0;">
+              <div class="card-body"><b>Physical mailbox member with a scan/forward flag?</b> They're also in the scanning/forwarding list. Scan and/or forward as normal — do <b>not</b> put it in the physical box.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left"><div class="step-num amber">3</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Check PhysicalMail_BOX tab</div>
+            <div class="step-desc"><span class="tag tag-sheet">Google Sheet</span> Find the company. If found, <span class="tag tag-write">write the box number</span> on the envelope and place it in that box. Members have their own keys.</div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left"><div class="step-num amber">4</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Check VM_Anytime tab</div>
+            <div class="step-desc"><span class="tag tag-sheet">Google Sheet</span></div>
+            <div class="two-col">
+              <div class="card" style="margin-top:10px; margin-bottom:0;">
+                <div class="card-title">Virtual Mailbox — 500–512 and 1100</div>
+                <div class="card-body">Write <b>"Virtual"</b> + box number on envelope. File in the <b>500s slot</b> (1100 = House Buyers, same process, just slot 1100).</div>
+              </div>
+              <div class="card" style="margin-top:10px; margin-bottom:0;">
+                <div class="card-title">Anytime — 100–499</div>
+                <div class="card-body">Write <b>"Anytime"</b> + box number on envelope. File in the <b>100–499 slot</b>.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left"><div class="step-num amber">5</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Check iPostal tab — box numbers 1000+</div>
+            <div class="step-desc"><span class="tag tag-sheet">Google Sheet</span> Must process in the iPostal app first:</div>
+            <div class="card" style="margin-top:10px; margin-bottom:6px;">
+              <div class="card-body">
+                1. Open the <b>iPostal app</b> and enter recipient info<br>
+                2. <span class="tag tag-scan">Scan</span> the mail item into the app<br>
+                3. <span class="tag tag-write">Write the box number</span> on the envelope<br>
+                4. File in the <b>1000+ section</b> of the cabinet
+              </div>
+            </div>
+            <div class="card gray" style="margin-bottom:0;">
+              <div class="card-body"><b>On-demand requests:</b> Check the iPostal app to-do list daily. Members request pickup or scanning — open, scan, put back in their file.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-left"><div class="step-num done">✓</div></div>
+          <div class="step-body">
+            <div class="step-title">Mail sorted!</div>
+            <div class="step-desc">If nothing matches any category, set it aside and flag for review.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MEMBER PICKUPS ══ -->
+    <div id="page-mail-pickup" class="page">
+      <div class="page-header">
+        <h1>Member mail pickups</h1>
+        <p class="subtitle">How to handle it when a member walks in to collect their mail.</p>
+      </div>
+
+      <div class="section-label">Anytime & Virtual Mailbox — walk-ins</div>
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Ask for their name</div>
+            <div class="step-desc">If the name doesn't match anything, ask for their company name instead.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Look them up in the VM_Anytime tab</div>
+            <div class="step-desc"><span class="tag tag-sheet">Google Sheet</span> Find their box number.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num done">3</div></div>
+          <div class="step-body">
+            <div class="step-title">Pull their mail and hand it over</div>
+            <div class="step-desc">Go to the file cabinet, pull everything from their slot, hand it to the member.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Physical mailbox members</div>
+      <div class="card gray">
+        <div class="card-body">They have their own <b>keys</b> to their physical boxes — they let themselves in. No action needed unless they have a scan/forward flag, which you handle at sorting time.</div>
+      </div>
+
+      <div class="section-label">iPostal members</div>
+      <div class="card gray">
+        <div class="card-body">Pickups and scan requests come through the <b>iPostal app to-do list</b>. Check daily. Open the item, scan it in the app, put it back in their file.</div>
+      </div>
+    </div>
+
+    <!-- ══ FRIDAY FORWARDING ══ -->
+    <div id="page-mail-friday" class="page">
+      <div class="page-header">
+        <h1>Friday mail forwarding</h1>
+        <p class="subtitle">Every Friday — collect, ship, then bill. Do all three before end of day.</p>
+      </div>
+
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Collect forwarding mail from the bottom drawer</div>
+            <div class="step-desc">Right side of the desk, bottom cabinet — all envelopes from the week.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num blue">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Create labels in USPS Click-N-Ship</div>
+            <div class="step-desc">For each forwarding member with mail:</div>
+            <div class="card" style="margin-top:10px; margin-bottom:0;">
+              <div class="card-body">
+                1. Click <b>New Label</b><br>
+                2. Select <b>USPS Flat Rate Envelope</b><br>
+                3. Weigh the envelope<br>
+                4. Enter the forwarding address from the sheet<br>
+                5. Create the label — repeat for each member
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num blue">3</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Pay for all labels at once</div>
+            <div class="card" style="margin-top:10px; margin-bottom:0;">
+              <div class="card-body">
+                Cart → <b>Select All</b> → <b>Pay Now</b> → check the box → <b>Credit Card</b><br>
+                CVV: <b>469</b> → <b>Print and Pay</b> → <b>Print Labels</b>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num">4</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Tape labels to envelopes and drop at USPS</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num green">5</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Bill each member in Kube (Yardi)</div>
+            <div class="step-desc">Repeat for every member you shipped today.</div>
+            <div class="card" style="margin-top:10px; margin-bottom:6px;">
+              <div class="card-body">
+                Receivables → Charges → <b>Add Charge</b><br><br>
+                <b>Company Name:</b> Forwarding member's name<br>
+                <b>Charge Type:</b> Amenity<br>
+                <b>Description:</b> Postage reimbursement to Office Evolution<br>
+                <b>Amenity:</b> Postage<br>
+                <b>Quantity:</b> 2<br>
+                <b>Price:</b> What you paid for the label<br><br>
+                Click <b>Save</b>
+              </div>
+            </div>
+            <div class="card green" style="margin-bottom:0;">
+              <div class="card-body">Quantity is <b>2 for everyone</b> — no exceptions.</div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num done">✓</div></div>
+          <div class="step-body">
+            <div class="step-title">Friday forwarding complete</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ROOMS ══ -->
+    <div id="page-rooms" class="page">
+      <div class="page-header">
+        <h1>Room bookings</h1>
+        <p class="subtitle">Conference rooms inside the office vs. the larger Crescent Room.</p>
+      </div>
+
+      <div class="section-label">Conference rooms (inside office)</div>
+      <div class="card gray">
+        <div class="card-body">Members book through <b>Yardi</b>. You approve the request and generate the invoice at the per-hour rate.</div>
+      </div>
+
+      <div class="section-label">Crescent Room</div>
+      <div class="two-col">
+        <div class="card yellow">
+          <div class="card-title">Pricing</div>
+          <div class="card-body">
+            <b>$200/hr</b> · 2-hour minimum ($400 min)<br>
+            Full day 8am–5pm: <b>$1,500 flat</b><br>
+            Discounts: $50 or $100 off available
+          </div>
+        </div>
+        <div class="card blue">
+          <div class="card-title">Booking process</div>
+          <div class="card-body">
+            1. Sign the contract<br>
+            2. Submit to customer<br>
+            3. Generate invoice<br>
+            4. Open charge in Kube<br>
+            5. Forward receipt to <b>Angela</b><br>
+            6. Angela handles the booking
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ MARKETING ══ -->
+    <div id="page-marketing" class="page">
+      <div class="page-header">
+        <h1>Leads & marketing</h1>
+        <p class="subtitle">Three tools, one goal — keep the pipeline moving.</p>
+      </div>
+
+      <div class="three-col">
+        <div class="card yellow">
+          <div class="card-title">HubSpot</div>
+          <div class="card-body" style="font-size:12px;">Track leads, send email campaigns, design pamphlets. Check form submissions daily and log all contact activity.</div>
+        </div>
+        <div class="card blue">
+          <div class="card-title">BirdEye</div>
+          <div class="card-body" style="font-size:12px;">Manage Google & Yelp reviews. Run social campaigns. Check Pending tasks tab regularly.</div>
+        </div>
+        <div class="card green">
+          <div class="card-title">Craigslist</div>
+          <div class="card-body" style="font-size:12px;">Post and renew listings for coworking, private offices, and virtual mail. Keep listings fresh.</div>
+        </div>
+      </div>
+
+      <div class="section-label">Giving a tour</div>
+      <div class="card">
+        <div class="card-body">Walk them through: <b>parking → directory → lobby → coffee setup → available spaces → amenities</b>. Use the Tour Questions page to guide the conversation first.</div>
+      </div>
+      <div class="action-row">
+        <button class="btn-sm" onclick="nav(document.querySelector('[data-page=questions]'))">Tour questions →</button>
+        <button class="btn-sm" onclick="nav(document.querySelector('[data-page=contracts]'))">New contract →</button>
+      </div>
+    </div>
+
+    <!-- ══ CONTRACTS ══ -->
+    <div id="page-contracts" class="page">
+      <div class="page-header">
+        <h1>Creating a new contract</h1>
+        <p class="subtitle">When a prospect is ready to sign up, create them in Yardi.</p>
+      </div>
+
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Yardi → Customers → Add Company</div>
+            <div class="step-desc">Fill in company name and contact info. Set <b>User Type = Member</b>.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num done">2</div></div>
+          <div class="step-body">
+            <div class="step-title">Add as a contract with the correct rate</div>
+            <div class="step-desc">Typical rate for larger private offices: <b>~$1,300</b>. Always confirm with <b>Hari Sirigibathina</b> before quoting.</div>
+            <div class="card yellow" style="margin-top:10px;">
+              <div class="card-body"><b>Coming in next update:</b> Step-by-step contract creation for each service type — mail packages, private office, coworking, virtual mail.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Plans at a glance</div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">Virtual / Mail</div>
+          <div class="card-body" style="font-size:12px;">
+            Virtual Mail: $69/mo (file folder)<br>
+            Virtual Mail Pro: $89/mo (mailbox)<br>
+            Business Address: $79/mo (grandfathered)
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Workspace</div>
+          <div class="card-body" style="font-size:12px;">
+            Coworking: $99/mo<br>
+            Coworking Pro: $349/mo<br>
+            Dedicated Desk: $499/mo<br>
+            Private Office: $900–$1,900/mo
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Meeting rooms</div>
+          <div class="card-body" style="font-size:12px;">
+            Meeting Plan: $199/mo<br>
+            $60 room credit included<br>
+            Member rate: 50% off
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Add-ons</div>
+          <div class="card-body" style="font-size:12px;">
+            Mail forwarding: $30/mo + postage<br>
+            Mail scanning: $40/mo<br>
+            Additional employee: $99/mo<br>
+            Directory listing: $15/mo
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TOUR QUESTIONS ══ -->
+    <div id="page-questions" class="page">
+      <div class="page-header">
+        <h1>Tour questions</h1>
+        <p class="subtitle">Use these to understand what a prospect needs before walking them through the space. Keep it a conversation — not an interrogation.</p>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">Opening — why they're here</div>
+        <ul class="q-list">
+          <li>What prompted you to come in / call today? What does the ideal outcome look like for you?</li>
+          <li>Tell me about your business — what do you do, how long have you been at it, what got you started?</li>
+        </ul>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">Where they work now</div>
+        <ul class="q-list">
+          <li>Where does your business operate from currently?</li>
+          <li>Who are your customers? Do you meet with them in person — where, how often, how many people?</li>
+          <li>Do you have any other regular meetings?</li>
+        </ul>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">What they're looking for</div>
+        <ul class="q-list">
+          <li>Are you looking for a dedicated full-time space, or something flexible / as-needed?</li>
+          <li>Do you prefer an open coworking environment or a private office?</li>
+        </ul>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">Why they're making a change</div>
+        <ul class="q-list">
+          <li>Why are you thinking about making a change?</li>
+          <li>If working from home: What are your biggest challenges with that setup?</li>
+          <li>If coming from a competitor: What do they do well? What could they do better?</li>
+          <li>When do you anticipate making the move?</li>
+        </ul>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">Decision & budget</div>
+        <ul class="q-list">
+          <li>Is this just for you, or do you have a team to consider?</li>
+          <li>Besides yourself, is anyone else involved in the decision?</li>
+          <li>What kind of budget do you have in mind?</li>
+        </ul>
+      </div>
+
+      <div class="q-card">
+        <div class="q-category">Before the walkthrough</div>
+        <ul class="q-list">
+          <li>Is there anything else I haven't asked that you'd like to share before I show you around?</li>
+        </ul>
+      </div>
+
+      <div class="card blue" style="margin-top:4px;">
+        <div class="card-body"><b>During the tour:</b> parking → directory → lobby → coffee → available spaces → amenities. Then transition to contract creation if they're ready.</div>
+      </div>
+      <div class="action-row">
+        <button class="btn-sm" onclick="nav(document.querySelector('[data-page=contracts]'))">New contract →</button>
+      </div>
+    </div>
+
+    <!-- ══ DAILY SCHEDULE ══ -->
+    <div id="page-schedule" class="page">
+      <div class="page-header">
+        <h1>Daily schedule</h1>
+        <p class="subtitle">Your day from open to close. Follow this order every day.</p>
+      </div>
+
+      <div class="section-label">Morning — opening up</div>
+      <div class="card" style="padding: 0.5rem 1.25rem;">
+        <ul class="checklist">
+          <li><div class="check-num amber">1</div><div>Turn on all lights — front desk hanging lights, both conference rooms, mail room, shared space hanging lights (×2), kitchen.</div></li>
+          <li><div class="check-num amber">2</div><div>Turn on the TV — press OK, tune to any channel.</div></li>
+          <li><div class="check-num amber">3</div><div>Check the dishwasher — if clean, put dishes away. If dirty, run it.</div></li>
+          <li><div class="check-num amber">4</div><div>Check the coffee rack — fill if not full.</div></li>
+          <li><div class="check-num amber">5</div><div>Wipe the counter if dirty.</div></li>
+          <li><div class="check-num amber">6</div><div>Check front desk for weekend drop-off mail — hold it until midday delivery arrives, then distribute everything together.</div></li>
+          <li><div class="check-num amber">7</div><div>Open the file cabinet. Set up the front TV slideshow: <b>Source → Monitor → Click first picture → Play</b>. Confirm slideshow is running.</div></li>
+          <li><div class="check-num amber">8</div><div>Open Yardi Kube → Bookings tab. If there's a reservation today, make sure the conference room is tidy and ready.</div></li>
+          <li><div class="check-num amber">9</div><div>Check Outlook — respond to emails.</div></li>
+          <li><div class="check-num amber">10</div><div>Check HubSpot — follow up with recent contacts, review scheduled tours.</div></li>
+          <li><div class="check-num amber">11</div><div>Check the phone for voicemails — listen and respond.</div></li>
+        </ul>
+      </div>
+
+      <div class="section-label">During the day</div>
+      <div class="card" style="padding: 0.5rem 1.25rem; margin-bottom:10px;">
+        <ul class="checklist">
+          <li><div class="check-num">12</div><div>Going to lunch? Put up the <b>"Stepped Away" sign</b>.</div></li>
+          <li><div class="check-num">13</div><div>Check iPostal app to-do list — handle any pickup or scan requests.</div></li>
+          <li><div class="check-num">14</div><div>If you have questions — check <b>Base Camp</b>.</div></li>
+          <li><div class="check-num green">15</div><div>When midday mail arrives — distribute using the mail sorting guide. Include any weekend drop-off held from the morning.</div></li>
+        </ul>
+      </div>
+
+      <div class="card yellow" style="margin-bottom:16px;">
+        <div class="card-title">Phone call script</div>
+        <div class="script-box">
+          <b>Answer:</b> "Office Evolution, this is ______, how may I help you?"<br><br>
+          <b>Potential lead?</b> Get first + last name, company (if possible), email, phone number.<br><br>
+          <b>Asking for the owner?</b> <i>"He's unavailable right now — can I take a message?"</i> Most of the time they hang up.
+        </div>
+      </div>
+
+      <div class="section-label">End of day — closing</div>
+      <div class="card" style="padding: 0.5rem 1.25rem;">
+        <ul class="checklist">
+          <li><div class="check-num green">16a</div><div>Check Yardi Kube bookings for <b>tomorrow</b> — know what to expect before you leave.</div></li>
+          <li><div class="check-num green">16b</div><div>Close both conference rooms.</div></li>
+          <li><div class="check-num green">16c</div><div>Turn off hanging lights, run the dishwasher, turn off the TV.</div></li>
+        </ul>
+      </div>
+
+      <div class="action-row" style="margin-top:12px;">
+        <button class="btn-sm" onclick="nav(document.querySelector('[data-page=mail-sort]'))">Mail sorting guide →</button>
+      </div>
+    </div>
+
+    <!-- ══ SUPPLIES ══ -->
+    <div id="page-supplies" class="page">
+      <div class="page-header">
+        <h1>Coffee & office supplies</h1>
+        <p class="subtitle">Order through EC Interactive Plus when stock is running low.</p>
+      </div>
+
+      <div class="step-flow">
+        <div class="step">
+          <div class="step-left"><div class="step-num">1</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Log in to EC Interactive Plus</div>
+            <div class="step-desc"><a href="https://www.ecinteractiveplus.com/4687/" target="_blank" style="color:#4285f4; font-weight:500;">ecinteractiveplus.com/4687</a></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num">2</div><div class="step-line"></div></div>
+          <div class="step-body">
+            <div class="step-title">Favorites → Coffee Supplies</div>
+            <div class="step-desc">Navigate to Favorites and select Coffee Supplies.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-left"><div class="step-num done">3</div></div>
+          <div class="step-body">
+            <div class="step-title">Add needed items → Checkout → Place Order</div>
+            <div class="step-desc">Review quantities before placing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function nav(el) {
+  if (!el) return;
+  var page = el.getAttribute ? el.getAttribute('data-page') : el.dataset.page;
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('[data-page="' + page + '"]').forEach(function(n) {
+    if (n.classList.contains('nav-item')) n.classList.add('active');
+  });
+  var target = document.getElementById('page-' + page);
+  if (target) target.classList.add('active');
+}
+</script>
+</body>
+</html>
